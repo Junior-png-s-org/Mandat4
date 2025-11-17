@@ -1,34 +1,18 @@
 import express from "express";
-import session from "express-session";
-import cors from "cors";
-import bodyParser from "body-parser";
-
-import authRoutes from "./routes/auth.js";
-import photoRoutes from "./routes/photos.js";
-import likeRoutes from "./routes/likes.js";
-import commentRoutes from "./routes/comments.js";
+import authRoutes from "./routes/auth.js"; // importe le router par défaut
 
 const app = express();
+app.use(express.json());
 
-// Middlewares
-app.use(cors({ origin: "*", credentials: true }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// monte le router
+app.use("/auth", authRoutes);
 
-// Session
-app.use(session({
-  secret: "instaclone_secret_key_123",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false }
-}));
+// route test
+app.get("/", (req, res) => {
+  res.send("Server OK");
+});
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/photos", photoRoutes);
-app.use("/api/likes", likeRoutes);
-app.use("/api/comments", commentRoutes);
-
-// Start server
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server started on http://localhost:${PORT}`);
+});
