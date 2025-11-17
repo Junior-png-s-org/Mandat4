@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/Junio-png/Mandat4/issues"
   },
-  "homepage": "https://github.com/Junio-png/Mandat4#readme"
+  "homepage": "https://github.com/Junio-png/Mandat4#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-session": "^1.18.2"
+  }
 }
