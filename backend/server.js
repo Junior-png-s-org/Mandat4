@@ -1,12 +1,5 @@
 import express from "express";
-import session from "express-session";
-import cors from "cors";
-import bodyParser from "body-parser";
-
-import authRoutes from "./routes/auth.js";
-import photoRoutes from "./routes/photos.js";
-import likeRoutes from "./routes/likes.js";
-import commentRoutes from "./routes/comments.js";
+import authRoutes from "./routes/auth.js"; // importe le router par défaut
 
 const app = express();
 
