@@ -30,7 +30,7 @@ app.use(session({
 }));
 
 // 🔥 Servir le frontend (dossier PUBLIC)
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Routes API
 app.use("/api/auth", authRoutes);
@@ -39,10 +39,11 @@ app.use("/api/likes", likeRoutes);
 app.use("/api/comments", commentRoutes);
 
 // 🔥 Important : redirige toute URL vers index.html (SPA)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  
+  app.get("/",(req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 // Start server
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`server running on http://localhost:${PORT}`));
