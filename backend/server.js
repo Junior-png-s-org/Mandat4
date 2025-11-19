@@ -1,5 +1,12 @@
 import express from "express";
-import authRoutes from "./routes/auth.js"; // importe le router par défaut
+import session from "express-session";
+import cors from "cors";
+import bodyParser from "body-parser";
+
+import authRoutes from "./routes/auth.js";
+import photoRoutes from "./routes/photos.js";
+import likeRoutes from "./routes/likes.js";
+import commentRoutes from "./routes/comments.js";
 
 const app = express();
 
@@ -10,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Session
 app.use(session({
-  secret: "instakill_secret_key_123",
+  secret: "instaclone_secret_key_123",
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false }
