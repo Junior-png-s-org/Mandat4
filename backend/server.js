@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Session
 app.use(session({
-  secret: "instaclone_secret_key_123",
+  secret: "instakill_secret_key_123",
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false }
