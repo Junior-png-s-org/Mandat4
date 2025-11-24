@@ -1,83 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Connexion - InstaClone</title>
-
-    <!-- Fonts + Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
-    <!-- Style principal -->
-    <link rel="stylesheet" href="css/style.css">
-
-    <!-- Style spécifique login -->
-    <link rel="stylesheet" href="css/login.css">
+  <meta charset="UTF-8" />
+  <title>Connexion - Instakill</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+<body class="auth-body">
+  <div class="auth-card">
+    <div class="auth-logo">INSTAKILL</div>
+    <h2>Connexion</h2>
+    <form id="loginForm" class="auth-form">
+      <input type="text" id="username" placeholder="Nom d'utilisateur" />
+      <input type="password" id="password" placeholder="Mot de passe" />
+      <button type="submit">Se connecter</button>
+    </form>
+    <p class="auth-switch">
+      Pas de compte ?
+      <a href="signup.html">Créer un compte</a>
+    </p>
+  </div>
 
-<body>
-
-    <div class="login-main">
-
-        <!-- LEFT IMAGE -->
-        <img src="https://i.ibb.co/XJXqZP4/principal-image.png" class="login-side-image">
-
-        <!-- LOGIN CARD -->
-        <div class="login-form-container">
-
-            <div class="login-card">
-
-                <!-- LOGO -->
-                <div class="login-logo">
-                    <img src="https://i.ibb.co/chYt9nx/instagram-header.png" height="70">
-                </div>
-
-                <!-- FORM -->
-                <div class="login-fields">
-
-                    <input id="email" type="text"
-                           placeholder="Numéro de téléphone ou adresse email">
-
-                    <input id="password" type="password"
-                           placeholder="Mot de passe">
-
-                    <button id="loginBtn" class="login-button">Connexion</button>
-
-                    <div class="login-or">
-                        <hr class="line">
-                        <span>OU</span>
-                        <hr class="line">
-                    </div>
-
-                    <div class="login-facebook">
-                        <i class="fa fa-facebook-square"></i>
-                        <span>Se connecter avec Facebook</span>
-                    </div>
-
-                    <div class="forgot-password">
-                        <a href="#">Mot de passe oublié ?</a>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- SIGNUP FOOTER -->
-            <div class="signup-footer">
-                Vous n’avez pas de compte ?
-                <a href="signup.html">Inscrivez-vous</a>
-            </div>
-
-            <!-- DOWNLOAD APP -->
-            <div class="download-text">Téléchargez l’application</div>
-
-            <div class="download-buttons">
-                <img src="https://i.ibb.co/0MVzVqf/download-appstore.png">
-                <img src="https://i.ibb.co/hdsFFGB/download-playstore.png">
-            </div>
-
-        </div>
-    </div>
-
-    <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/auth.js"></script>
 </body>
 </html>
