@@ -1,49 +1,46 @@
-import express from "express";
-import session from "express-session";
-import cors from "cors";
-import bodyParser from "body-parser";
-import path from "path";
-import { fileURLToPath } from "url";
 
-import authRoutes from "./routes/auth.js";
-import photoRoutes from "./routes/photos.js";
-import likeRoutes from "./routes/likes.js";
-import commentRoutes from "./routes/comments.js";
+const express = require("express");
+const session = require("express-session");
+const path = require("path");
+const cors = require("cors");
+
+const authRoutes = require("./routes/auth");
+const photosRoutes = require("./routes/photos");
+const likesRoutes = require("./routes/likes");
+const commentsRoutes = require("./routes/comments");
 
 const app = express();
 
-// Pour __dirname dans ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Middlewares
-app.use(cors({ origin: "*", credentials: true }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: "instakill-secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
-// Session
-app.use(session({
-  secret: "instaclone_secret_key_123",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false }
-}));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
-// 🔥 Servir le frontend (dossier PUBLIC)
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-// Routes API
 app.use("/api/auth", authRoutes);
-app.use("/api/photos", photoRoutes);
-app.use("/api/likes", likeRoutes);
-app.use("/api/comments", commentRoutes);
+app.use("/api/photos", photosRoutes);
+app.use("/api/likes", likesRoutes);
+app.use("/api/comments", commentsRoutes);
 
-// 🔥 Important : redirige toute URL vers index.html (SPA)
-  
-  app.get("/",(req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-// Start server
-const PORT = 3000;
-app.listen(PORT, () => console.log(`server running on http://localhost:${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Serveur démarré sur http://localhost:${PORT}`);
+});
