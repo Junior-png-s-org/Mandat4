@@ -1,135 +1,122 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>INSTAKILL</title>
-
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/feed.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <title>Instakill - Accueil</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 </head>
+<body class="app-body">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-logo">INSTAKILL</div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item nav-item-active">
+          <i class="fa-solid fa-house"></i>
+          <span>Accueil</span>
+        </a>
+        <a href="search.html" class="nav-item">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>Rechercher</span>
+        </a>
+        <a href="create.html" class="nav-item">
+          <i class="fa-solid fa-plus"></i>
+          <span>Créer</span>
+        </a>
+        <a href="notifications.html" class="nav-item">
+          <i class="fa-regular fa-heart"></i>
+          <span>Notifications</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+          <i class="fa-regular fa-user"></i>
+          <span>Profil</span>
+        </a>
+      </nav>
+    </aside>
 
-<body>
-<!-- Sidebar à gauche -->
-<div class="side-nav">
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-search-wrapper">
+          <input
+            type="text"
+            id="search"
+            class="topbar-search"
+            placeholder="Recherche"
+          />
+        </div>
+        <div class="topbar-actions">
+          <button id="logoutBtn" class="icon-btn" title="Se déconnecter">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </header>
 
-  <div class="side-item active">
-    <i class="fa-solid fa-house"></i>
-    <span>Accueil</span>
-  </div>
+      <main class="content">
+        <section class="welcome-card">
+          <div>
+            <h2>Hello, <span id="welcomeName"></span></h2>
+            <p>Bienvenue sur INSTAKILL 👋</p>
+          </div>
+          <div class="welcome-avatar">
+            <span class="welcome-emoji">😊</span>
+          </div>
+        </section>
 
-  <div class="side-item">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span>Rechercher</span>
-  </div>
+        <section class="stories-row">
+          <div class="story">
+            <div class="story-circle"></div>
+            <span>Moi</span>
+          </div>
+          <div class="story">
+            <div class="story-circle"></div>
+            <span>Alex</span>
+          </div>
+          <div class="story">
+            <div class="story-circle"></div>
+            <span>Sarah</span>
+          </div>
+          <div class="story">
+            <div class="story-circle"></div>
+            <span>John</span>
+          </div>
+        </section>
 
-  <div class="side-item">
-    <i class="fa-solid fa-square-plus"></i>
-    <span>Créer</span>
-  </div>
-
-  <div class="side-item">
-    <i class="fa-regular fa-heart"></i>
-    <span>Notifications</span>
-  </div>
-
-  <div class="side-item">
-    <i class="fa-solid fa-user"></i>
-    <span>Profil</span>
-  </div>
-
-</div>
-
-  <!-- Navbar -->
-<nav class="insta-nav">
-  <div class="nav-left">
-    <h2 class="brand-title">INSTAKILL</h2>
-  </div>
-
-  <div class="nav-center">
-    <input type="text" id="search" placeholder="Recherche">
-  </div>
-
-  <div class="nav-right">
-    <i class="fa-regular fa-heart nav-heart"></i>
-
-    <!-- Déconnexion icône -->
-    <i id="logoutBtn" class="fa-solid fa-right-from-bracket logout-icon"></i>
-  </div>
-</nav>
-
-
-    <!-- HEADER HELLO -->
-  <section class="hello-header">
-    <div>
-      <div class="hello-text-main">Hello, Adrian</div>
-      <div class="hello-text-sub">Bienvenue sur INSTAKILL 👋</div>
+        <section id="photoGrid" class="feed-grid"></section>
+      </main>
     </div>
-    <div class="hello-avatar"></div>
-  </section>
+  </div>
 
-  <!-- STORIES -->
-  <section class="stories">
-    <div class="story">
-      <div class="story-img"></div>
-      <p>Moi</p>
-    </div>
-    <div class="story">
-      <div class="story-img"></div>
-      <p>Alex</p>
-    </div>
-    <div class="story">
-      <div class="story-img"></div>
-      <p>Sarah</p>
-    </div>
-    <div class="story">
-      <div class="story-img"></div>
-      <p>John</p>
-    </div>
-  </section>
-
-
-  <!-- FEED -->
-  <section class="feed-container" id="photoGrid"></section>
-
-
-  <!-- MODAL -->
-  <div class="modal" id="photoModal">
+  <div id="photoModal" class="modal">
     <div class="modal-content">
-      <div class="modal-left">
-        <img id="modalImg">
-      </div>
-
-      <div class="modal-right">
-        <span id="closeModal" class="close">&times;</span>
-
-        <div class="modal-header">
-          <i class="fa-solid fa-circle-user profile-icon"></i>
-          <span id="modalAuthor"></span>
+      <button id="closeModal" class="modal-close">&times;</button>
+      <div class="modal-body">
+        <div class="modal-image-wrapper">
+          <img id="modalImg" src="" alt="Photo" />
         </div>
-
-        <div class="modal-actions">
-          <i class="fa-regular fa-heart" id="likeIcon"></i>
-          <span id="modalLikes"></span> likes
-        </div>
-
-        <div class="modal-comments">
-          <h3>Commentaires</h3>
-          <div id="commentList"></div>
-        </div>
-
-        <div class="modal-add-comment">
-          <textarea id="newComment" placeholder="Ajouter un commentaire..."></textarea>
-          <button id="sendComment">Publier</button>
+        <div class="modal-side">
+          <div class="modal-header">
+            <span id="modalAuthor" class="modal-author"></span>
+          </div>
+          <div class="modal-actions">
+            <i id="modalLikeIcon" class="fa-regular fa-heart"></i>
+            <span id="modalLikes">0</span> likes
+          </div>
+          <div id="modalComments" class="modal-comments"></div>
+          <div class="modal-add-comment">
+            <input type="text" id="newComment" placeholder="Ajouter un commentaire…" />
+            <button id="sendComment">Publier</button>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 
-
-  <script type="module" src="js/api.js"></script>
-  <script type="module" src="js/modal.js"></script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
