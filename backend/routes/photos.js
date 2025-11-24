@@ -1,9 +1,11 @@
-import express from "express";
-import { getPhotos, addPhoto } from "../controllers/photosController.js";
+const express = require("express");
+const { getPhotos, addPhoto, getMyPhotos } = require("../controllers/photosController");
+const { requireAuth } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+router.get("/me", requireAuth, getMyPhotos);
 router.get("/", getPhotos);
-router.post("/", addPhoto);
+router.post("/", requireAuth, addPhoto);
 
-export default router;
+module.exports = router;
