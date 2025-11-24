@@ -1,88 +1,45 @@
+import { openDB } from "../utils/database.js";
+import bcrypt from "bcrypt";
 
-const bcrypt = require("bcrypt");
-const { get, run } = require("../utils/db");
-
-async function register(req, res) {
-  try {
+export async function register(req, res) {
     const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res
-        .status(400)
-        .json({ error: "Nom d'utilisateur et mot de passe requis." });
-    }
+    if (!username || !password)
+        return res.status(400).json({ error: "Champs requis manquants." });
 
-    const existing = await get(
-      "SELECT * FROM users WHERE username = ?",
-      [username]
-    );
-    if (existing) {
-      return res
-        .status(400)
-        .json({ error: "Ce nom d'utilisateur existe déjà." });
-    }
+    const db = await openDB();
+    const exist = await db.get("SELECT * FROM users WHERE username = ?", [username]);
+
+    if (exist) return res.status(400).json({ error: "Utilisateur déjà existant." });
 
     const hashed = await bcrypt.hash(password, 10);
-    await run(
-      "INSERT INTO users (username, password) VALUES (?, ?)",
-      [username, hashed]
+
+    await db.run(
+        "INSERT INTO users (username, password) VALUES (?, ?)",
+        [username, hashed]
     );
 
-    res.json({ message: "Compte créé avec succès." });
-  } catch (err) {
-    console.error("Erreur register:", err);
-    res.status(500).json({ error: "Erreur interne du serveur." });
-  }
+    res.json({ message: "Compte créé avec succès !" });
 }
 
-async function login(req, res) {
-  try {
+export async function login(req, res) {
     const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res
-        .status(400)
-        .json({ error: "Nom d'utilisateur et mot de passe requis." });
-    }
+    const db = await openDB();
+    const user = await db.get("SELECT * FROM users WHERE username = ?", [username]);
 
-    const user = await get(
-      "SELECT * FROM users WHERE username = ?",
-      [username]
-    );
-    if (!user) {
-      return res.status(404).json({ error: "Utilisateur introuvable." });
-    }
+    if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(400).json({ error: "Mot de passe incorrect." });
-    }
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(400).json({ error: "Mot de passe incorrect" });
 
     req.session.user = { id: user.id, username: user.username };
-    res.json({ message: "Connexion réussie.", user: req.session.user });
-  } catch (err) {
-    console.error("Erreur login:", err);
-    res.status(500).json({ error: "Erreur interne du serveur." });
-  }
+
+    res.json({ message: "Connexion réussie", user: req.session.user });
 }
 
-function logout(req, res) {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Erreur logout:", err);
-    }
-    // Supprime le cookie de session côté client
-    res.clearCookie("connect.sid");
-    res.json({ message: "Déconnexion réussie." });
-  });
+export function logout(req, res) {
+    req.session.destroy(() => {
+        res.json({ message: "Déconnecté" });
+    });
 }
-
-// Retourne l'utilisateur courant (ou null s'il n'y a pas de session)
-function me(req, res) {
-  if (!req.session || !req.session.user) {
-    return res.json(null);
-  }
-  res.json(req.session.user);
-}
-
-module.exports = { register, login, logout, me };

@@ -1,5 +1,5 @@
-
 import { api } from "./api.js";
+import { refreshLikes, loadComments } from "./app.js";
 
 const modal = document.getElementById("photoModal");
 const closeModalBtn = document.getElementById("closeModal");
@@ -7,91 +7,63 @@ const modalImg = document.getElementById("modalImg");
 const modalAuthor = document.getElementById("modalAuthor");
 const modalLikes = document.getElementById("modalLikes");
 const modalLikeIcon = document.getElementById("modalLikeIcon");
-const modalComments = document.getElementById("modalComments");
-const newCommentInput = document.getElementById("newComment");
-const sendCommentBtn = document.getElementById("sendComment");
+const commentList = document.getElementById("commentList");
+const newComment = document.getElementById("newComment");
+const sendComment = document.getElementById("sendComment");
 
-let currentPhoto = null;
+let currentPhotoId = null;
 
 export function openModal(photo) {
-  currentPhoto = photo;
-  if (!modal) return;
-
+  currentPhotoId = photo.id;
   modal.style.display = "flex";
 
-  const imgUrl = photo.image_path || photo.download_url || "";
-  if (modalImg) modalImg.src = imgUrl;
+  modalImg.src = photo.download_url;
+  modalAuthor.textContent = photo.author;
 
-  const authorName = photo.username || photo.author || "Utilisateur";
-  if (modalAuthor) modalAuthor.textContent = authorName;
+  modalLikes.dataset.photoId = String(photo.id);
+  commentList.dataset.photoId = String(photo.id);
 
-  if (modalLikes) modalLikes.textContent = "0";
+  // reset icon
+  modalLikeIcon.classList.remove("liked");
+  modalLikeIcon.classList.add("fa-regular");
+  modalLikeIcon.classList.remove("fa-solid");
 
-  if (modalLikeIcon) {
-    modalLikeIcon.classList.remove("liked", "fa-solid");
-    modalLikeIcon.classList.add("fa-regular");
+  refreshLikes(photo.id);
+  loadComments(photo.id);
+}
+
+closeModalBtn.onclick = () => {
+  modal.style.display = "none";
+};
+
+window.onclick = (e) => {
+  if (e.target === modal) modal.style.display = "none";
+};
+
+// Like depuis la modal
+modalLikeIcon.addEventListener("click", async () => {
+  if (!currentPhotoId) return;
+
+  const liked = modalLikeIcon.classList.contains("liked");
+
+  if (!liked) {
+    await api.like(currentPhotoId);
+    modalLikeIcon.classList.add("liked");
+    modalLikeIcon.classList.replace("fa-regular", "fa-solid");
+  } else {
+    await api.unlike(currentPhotoId);
+    modalLikeIcon.classList.remove("liked");
+    modalLikeIcon.classList.replace("fa-solid", "fa-regular");
   }
 
-  refreshModalLikes();
-  loadModalComments();
-}
+  refreshLikes(currentPhotoId);
+});
 
-async function refreshModalLikes() {
-  if (!currentPhoto) return;
-  const data = await api.getLikes(currentPhoto.id);
-  if (modalLikes) {
-    modalLikes.textContent = data.likes ?? 0;
-  }
-}
+// Commentaire depuis la modal
+sendComment.addEventListener("click", async () => {
+  if (!currentPhotoId || !newComment.value.trim()) return;
 
-async function loadModalComments() {
-  if (!currentPhoto || !modalComments) return;
-  const comments = await api.getComments(currentPhoto.id);
-  modalComments.innerHTML = "";
-  comments.forEach((c) => {
-    const p = document.createElement("p");
-    const author = c.username || c.author || "Utilisateur";
-    p.innerHTML = `<strong>${author}</strong> ${c.comment}`;
-    modalComments.appendChild(p);
-  });
-}
-
-if (closeModalBtn) {
-  closeModalBtn.addEventListener("click", () => {
-    if (modal) modal.style.display = "none";
-  });
-}
-
-if (modal) {
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.style.display = "none";
-    }
-  });
-}
-
-if (modalLikeIcon) {
-  modalLikeIcon.addEventListener("click", async () => {
-    if (!currentPhoto) return;
-    const data = await api.toggleLike(currentPhoto.id);
-    if (data.liked) {
-      modalLikeIcon.classList.add("liked", "fa-solid");
-      modalLikeIcon.classList.remove("fa-regular");
-    } else {
-      modalLikeIcon.classList.remove("liked", "fa-solid");
-      modalLikeIcon.classList.add("fa-regular");
-    }
-    await refreshModalLikes();
-  });
-}
-
-if (sendCommentBtn) {
-  sendCommentBtn.addEventListener("click", async () => {
-    if (!currentPhoto || !newCommentInput) return;
-    const text = newCommentInput.value.trim();
-    if (!text) return;
-    await api.addComment(currentPhoto.id, text);
-    newCommentInput.value = "";
-    await loadModalComments();
-  });
-}
+  await api.addComment(currentPhotoId, newComment.value.trim());
+  newComment.value = "";
+  loadComments(currentPhotoId);
+});
