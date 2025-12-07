@@ -45,6 +45,26 @@ export const api = {
     });
   },
 
+  async me() {
+    const res = await fetch(`${API_BASE}/auth/me`, { credentials: "include" });
+    return jsonOrEmpty(res);
+  },
+
+  async getProfile() {
+    const res = await fetch(`${API_BASE}/auth/profile`, { credentials: "include" });
+    return jsonOrEmpty(res);
+  },
+
+  async updateProfile(payload) {
+    const res = await fetch(`${API_BASE}/auth/profile`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload || {}),
+      credentials: "include",
+    });
+    return jsonOrEmpty(res);
+  },
+
   async getPhotos(search = "") {
     const url = search
       ? `${API_BASE}/photos?search=${encodeURIComponent(search)}`
@@ -92,6 +112,26 @@ export const api = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ photo_id: photoId, comment }),
+      credentials: "include",
+    });
+    return jsonOrEmpty(res);
+  },
+
+  async getStories() {
+    const res = await fetch(`${API_BASE}/stories`, { credentials: "include" });
+    return jsonOrEmpty(res);
+  },
+
+  async getMyStories() {
+    const res = await fetch(`${API_BASE}/stories/me`, { credentials: "include" });
+    return jsonOrEmpty(res);
+  },
+
+  async addStory(image_url, title = "", video_url = "") {
+    const res = await fetch(`${API_BASE}/stories`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image_url, video_url, title }),
       credentials: "include",
     });
     return jsonOrEmpty(res);
