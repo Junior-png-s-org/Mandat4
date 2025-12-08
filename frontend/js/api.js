@@ -96,4 +96,11 @@ export const api = {
     });
     return jsonOrEmpty(res);
   },
+
+  deletePhoto(id){
+    return fetch(`${API_BASE}/photos/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    }).then(r => jsonOrEmpty(r));
+  }
 };
