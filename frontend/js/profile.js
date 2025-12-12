@@ -26,7 +26,6 @@ const closeCreateStory = document.getElementById("closeCreateStory");
 const createStoryForm = document.getElementById("createStoryForm");
 const storyTitleInput = document.getElementById("storyTitle");
 const storyImageUrlInput = document.getElementById("storyImageUrl");
-const storyVideoUrlInput = document.getElementById("storyVideoUrl");
 const viewStoryModal = document.getElementById("viewStoryModal");
 const closeViewStory = document.getElementById("closeViewStory");
 const viewStoryImg = document.getElementById("viewStoryImg");
@@ -129,55 +128,23 @@ async function loadStories() {
       sb.className = "story-bubble";
       sb.setAttribute("data-story-id", String(s.id));
       sb.style.cursor = "pointer";
-      const isVideo = !!s.video_url;
-      sb.innerHTML = isVideo
-        ? `
-          <div class="story-avatar" style="position:relative;background:#000;display:flex;align-items:center;justify-content:center;">
-            <i class="fa-solid fa-play" style="color:white"></i>
-          </div>
-          <p>${s.title || s.username || "Story"}</p>
-        `
-        : `
-          <div class="story-avatar">
-            <img id="storyImg_${s.id}" alt="story" />
-          </div>
-          <p>${s.title || s.username || "Story"}</p>
-        `;
-      if (!isVideo) {
-        const imgEl = sb.querySelector(`#storyImg_${s.id}`);
-        if (imgEl) {
-          imgEl.referrerPolicy = "no-referrer";
-          imgEl.crossOrigin = "anonymous";
-          imgEl.src = `/api/proxy?url=${encodeURIComponent(s.image_url)}`;
-        }
+      sb.innerHTML = `
+        <div class="story-avatar">
+          <img id="storyImg_${s.id}" alt="story" />
+        </div>
+        <p>${s.title || s.username || "Story"}</p>
+      `;
+      const imgEl = sb.querySelector(`#storyImg_${s.id}`);
+      if (imgEl) {
+        imgEl.src = s.image_url;
       }
       sb.addEventListener("click", () => {
         if (viewStoryTitle) viewStoryTitle.textContent = s.title || "Story";
-        if (isVideo) {
-          if (viewStoryImg) viewStoryImg.style.display = "none";
-          let video = document.getElementById("viewStoryVideo");
-          if (!video) {
-            const wrap = document.querySelector("#viewStoryModal .modal-image-wrapper");
-            video = document.createElement("video");
-            video.id = "viewStoryVideo";
-            video.style.width = "100%";
-            video.style.height = "100%";
-            video.setAttribute("controls", "");
-            video.setAttribute("autoplay", "");
-            video.setAttribute("muted", "");
-            video.setAttribute("loop", "");
-            if (wrap) wrap.appendChild(video);
-          }
-          video.src = `/api/proxy?url=${encodeURIComponent(s.video_url)}`;
-        } else {
-          const video = document.getElementById("viewStoryVideo");
-          if (video) video.remove();
-          if (viewStoryImg) {
-            viewStoryImg.style.display = "block";
-            viewStoryImg.referrerPolicy = "no-referrer";
-            viewStoryImg.crossOrigin = "anonymous";
-            viewStoryImg.src = `/api/proxy?url=${encodeURIComponent(s.image_url)}`;
-          }
+        const video = document.getElementById("viewStoryVideo");
+        if (video) video.remove();
+        if (viewStoryImg) {
+          viewStoryImg.style.display = "block";
+          viewStoryImg.src = s.image_url;
         }
         if (viewStoryModal) viewStoryModal.style.display = "flex";
       });
@@ -213,13 +180,11 @@ if (createStoryForm) {
     e.preventDefault();
     const imageUrl = storyImageUrlInput ? storyImageUrlInput.value.trim() : "";
     const title = storyTitleInput ? storyTitleInput.value.trim() : "";
-    const videoUrl = storyVideoUrlInput ? storyVideoUrlInput.value.trim() : "";
-    if (!imageUrl && !videoUrl) return;
-    await api.addStory(imageUrl, title, videoUrl);
+    if (!imageUrl) return;
+    await api.addStory(imageUrl, title);
     if (createStoryModal) createStoryModal.style.display = "none";
     if (storyImageUrlInput) storyImageUrlInput.value = "";
     if (storyTitleInput) storyTitleInput.value = "";
-    if (storyVideoUrlInput) storyVideoUrlInput.value = "";
     await loadStories();
   });
 }
