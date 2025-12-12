@@ -5,9 +5,12 @@ async function getPhotos(req, res) {
   try {
     const search = (req.query.search || "").trim();
     let rows;
+
     if (search) {
       rows = await all(
-        `SELECT p.*, u.username
+        `SELECT p.*,
+                u.username,
+                (SELECT COUNT(*) FROM comments c WHERE c.photo_id = p.id) AS comment_count
          FROM photos p
          JOIN users u ON p.user_id = u.id
          WHERE p.caption LIKE ?
@@ -16,18 +19,22 @@ async function getPhotos(req, res) {
       );
     } else {
       rows = await all(
-        `SELECT p.*, u.username
+        `SELECT p.*,
+                u.username,
+                (SELECT COUNT(*) FROM comments c WHERE c.photo_id = p.id) AS comment_count
          FROM photos p
          JOIN users u ON p.user_id = u.id
          ORDER BY p.created_at DESC`
       );
     }
+
     res.json(rows);
   } catch (err) {
     console.error("Erreur getPhotos:", err);
     res.status(500).json({ error: "Erreur lors du chargement des photos." });
   }
 }
+
 
 async function addPhoto(req, res) {
   try {

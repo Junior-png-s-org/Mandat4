@@ -45,6 +45,7 @@ function displayPosts(photos) {
 
     const authorName = photo.username || photo.author || "Utilisateur";
     const imageUrl = photo.image_path || photo.download_url || "";
+    const isOwner = photo.user_id ===  window.currentUserId;
 
     article.innerHTML = `
       <div class="post-header">
@@ -52,14 +53,26 @@ function displayPosts(photos) {
           authorName
         )}" alt="pfp" />
         <span class="post-user-name">${authorName}</span>
+        ${isOwner ? `<button class="post-delete-btn" title="Supprimer la photo" data-photo-id="${photo.id}">🗑️</button>` : ""}
       </div>
       <img src="${imageUrl}" alt="photo" class="post-img">
+
       <div class="post-actions">
         <i class="fa-regular fa-heart post-like"></i>
+        <i class="fa-regular fa-comment post-comments-count"></i>
       </div>
+
       <div class="post-likes">
         <span data-photo-likes="${photo.id}">0</span> likes
       </div>
+
+      <div class="post-comments-count">
+  <span data-photo-comments-count="${photo.id}">
+    ${photo.comment_count}
+  </span> commentaires
+</div>
+
+
       <div class="post-desc">
         <strong>${authorName}</strong>
         <span>${photo.caption || ""}</span>
@@ -100,7 +113,8 @@ function displayPosts(photos) {
         if (!text) return;
         await api.addComment(photo.id, text);
         input.value = "";
-        await loadComments(photo.id);
+        await loadComments(photo.id)
+        await refreshCommnetsCount(photo.id);
       });
     }
 
@@ -116,6 +130,12 @@ async function refreshLikes(photoId) {
   if (span) span.textContent = data.likes ?? 0;
 }
 
+async function refreshCommnetsCount(photoId) {
+  const photos = await api.getPhotos("");
+  const photo = photos.find(p => p.id === photoId);
+const span = document.querySelector(`[data-photo-comments-count="${photoId}"]`);
+  if (span) span.textContent =  photo.comment_count ?? 0;}
+
 async function loadComments(photoId) {
   const comments = await api.getComments(photoId);
   const container = document.querySelector(
@@ -130,6 +150,15 @@ async function loadComments(photoId) {
     container.appendChild(p);
   });
 }
+const deletebtn= article.querySelector(`[data-photo-id="${photo.id}"]`);
+    if (deletebtn) {
+      deletebtn.addEventListener("click", async () => {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer cette photo ?")) 
+          return; 
+        await api.deletePhoto(photo.id);
+        loadPhotos();
+      });
+    }     
 
 if (searchInput) {
   searchInput.addEventListener("input", () => {

@@ -48,4 +48,29 @@ async function addComment(req, res) {
   }
 }
 
-module.exports = { getComments, addComment };
+async function getALLPhotos(req, res) {
+  try {
+    const rows = await all(`
+      SELECT 
+        p.*,
+        u.username,
+        (
+          SELECT COUNT(*)
+          FROM comments c
+          WHERE c.photo_id = p.id
+        ) AS comment_count
+      FROM photos p
+      JOIN users u ON p.user_id = u.id
+      ORDER BY p.created_at DESC
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Erreur getALLPhotos:", err);
+    res.status(500).json({ error: "Erreur lors du chargement des photos." });
+  }
+}
+
+
+
+module.exports = { getComments, addComment, getALLPhotos };

@@ -1,0 +1,12 @@
+# Ignorer les bases de données SQLite
+*.sqlite3
+
+# Ignorer les fichiers de configuration sensibles
+.env
+
+# Ignorer le dossier des dépendances Node.js
+node_modules/
+
+# Ignorer les fichiers temporaires
+*.log
+.DS_Store
