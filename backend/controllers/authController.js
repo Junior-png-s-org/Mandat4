@@ -1,6 +1,6 @@
 
 const bcrypt = require("bcrypt");
-const { get, run } = require("../utils/db");
+const { get, run, all } = require("../utils/db");
 
 async function register(req, res) {
   try {
@@ -78,11 +78,71 @@ function logout(req, res) {
 }
 
 // Retourne l'utilisateur courant (ou null s'il n'y a pas de session)
-function me(req, res) {
-  if (!req.session || !req.session.user) {
-    return res.json(null);
+async function ensureProfileColumns() {
+  const cols = await all("PRAGMA table_info(users)");
+  const names = cols.map((c) => c.name);
+  if (!names.includes("full_name")) {
+    await run("ALTER TABLE users ADD COLUMN full_name TEXT");
   }
-  res.json(req.session.user);
+  if (!names.includes("bio")) {
+    await run("ALTER TABLE users ADD COLUMN bio TEXT");
+  }
+  if (!names.includes("avatar_url")) {
+    await run("ALTER TABLE users ADD COLUMN avatar_url TEXT");
+  }
 }
 
-module.exports = { register, login, logout, me };
+async function me(req, res) {
+  try {
+    if (!req.session || !req.session.user) {
+      return res.json(null);
+    }
+    await ensureProfileColumns();
+    const row = await get(
+      "SELECT id, username, COALESCE(full_name,'') AS full_name, COALESCE(bio,'') AS bio, COALESCE(avatar_url,'') AS avatar_url FROM users WHERE id = ?",
+      [req.session.user.id]
+    );
+    res.json(row);
+  } catch (err) {
+    res.status(500).json({ error: "Erreur interne du serveur." });
+  }
+}
+
+async function getProfile(req, res) {
+  try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ error: "Non autorisé." });
+    }
+    await ensureProfileColumns();
+    const row = await get(
+      "SELECT id, username, COALESCE(full_name,'') AS full_name, COALESCE(bio,'') AS bio, COALESCE(avatar_url,'') AS avatar_url FROM users WHERE id = ?",
+      [req.session.user.id]
+    );
+    res.json(row);
+  } catch (err) {
+    res.status(500).json({ error: "Erreur interne du serveur." });
+  }
+}
+
+async function updateProfile(req, res) {
+  try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ error: "Non autorisé." });
+    }
+    const { full_name = "", bio = "", avatar_url = "" } = req.body || {};
+    await ensureProfileColumns();
+    await run(
+      "UPDATE users SET full_name = ?, bio = ?, avatar_url = ? WHERE id = ?",
+      [full_name, bio, avatar_url, req.session.user.id]
+    );
+    const row = await get(
+      "SELECT id, username, COALESCE(full_name,'') AS full_name, COALESCE(bio,'') AS bio, COALESCE(avatar_url,'') AS avatar_url FROM users WHERE id = ?",
+      [req.session.user.id]
+    );
+    res.json({ message: "Profil mis à jour.", profile: row });
+  } catch (err) {
+    res.status(500).json({ error: "Erreur lors de la mise à jour du profil." });
+  }
+}
+
+module.exports = { register, login, logout, me, getProfile, updateProfile };

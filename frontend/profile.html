@@ -65,7 +65,7 @@
           <div class="profile-main">
             <div class="profile-row-username">
               <span id="profileUsername" class="profile-username">@username</span>
-              <button class="profile-edit-btn">Edit Profile</button>
+              <button id="openEditProfile" class="profile-edit-btn">Modifier le profil</button>
             </div>
             <div class="profile-stats">
               <div><span id="profilePostsCount">0</span> posts</div>
@@ -80,30 +80,10 @@
         </section>
 
         <section class="profile-stories card">
-          <div class="stories-row">
-            <div class="story-bubble">
-              <div class="story-avatar story-avatar-outline">
-                <span>+</span>
-              </div>
+          <div id="storiesRow" class="stories-row">
+            <div id="addStoryBubble" class="story-bubble" style="cursor:pointer;">
+              <div class="story-avatar story-avatar-outline"><span>+</span></div>
               <p>New</p>
-            </div>
-            <div class="story-bubble">
-              <div class="story-avatar">
-                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1" alt="friend" />
-              </div>
-              <p>Friends</p>
-            </div>
-            <div class="story-bubble">
-              <div class="story-avatar">
-                <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d" alt="sport" />
-              </div>
-              <p>Sport</p>
-            </div>
-            <div class="story-bubble">
-              <div class="story-avatar">
-                <img src="https://images.unsplash.com/photo-1526498460520-4c246339dccb" alt="design" />
-              </div>
-              <p>Design</p>
             </div>
           </div>
         </section>
@@ -122,9 +102,71 @@
           </div>
         </section>
       </main>
-    </div>
-  </div>
+</div>
+</div>
 
   <script type="module" src="js/profile.js"></script>
 </body>
+<div id="editProfileModal" class="modal">
+  <div class="modal-content">
+    <button id="closeEditProfile" class="modal-close">&times;</button>
+    <div class="modal-body" style="padding:16px;">
+      <div style="flex:1;">
+        <h3 style="margin:0 0 12px 0;">Modifier le profil</h3>
+        <form id="editProfileForm" class="create-form">
+          <label>
+            Nom complet
+            <input type="text" id="editFullName" placeholder="Nom complet" />
+          </label>
+          <label>
+            Bio
+            <textarea id="editBio" rows="3" placeholder="À propos de toi"></textarea>
+          </label>
+          <label>
+            URL de l’avatar
+            <input type="text" id="editAvatarUrl" placeholder="https://..." />
+          </label>
+          <button type="submit" class="primary-btn">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="createStoryModal" class="modal">
+  <div class="modal-content">
+    <button id="closeCreateStory" class="modal-close">&times;</button>
+    <div class="modal-body" style="padding:16px;">
+      <div style="flex:1;">
+        <h3 style="margin:0 0 12px 0;">Nouvelle story</h3>
+        <form id="createStoryForm" class="create-form">
+          <label>
+            Titre
+            <input type="text" id="storyTitle" placeholder="Titre (optionnel)" />
+          </label>
+          <label>
+            URL de l'image
+            <input type="text" id="storyImageUrl" placeholder="https://..." />
+          </label>
+          <label>
+            URL de la vidéo (optionnel)
+            <input type="text" id="storyVideoUrl" placeholder="https://..." />
+          </label>
+          <button type="submit" class="primary-btn">Publier</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="viewStoryModal" class="modal">
+  <div class="modal-content">
+    <button id="closeViewStory" class="modal-close">&times;</button>
+    <div class="modal-body">
+      <div class="modal-image-wrapper"><img id="viewStoryImg" src="" alt="Story" /></div>
+      <div class="modal-side">
+        <div class="modal-header" id="viewStoryTitle"></div>
+      </div>
+    </div>
+  </div>
+</div>
 </html>
