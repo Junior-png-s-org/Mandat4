@@ -144,4 +144,12 @@ export const api = {
     });
     return jsonOrEmpty(res);
   },
+
+  async deleteStory(id) {
+    const res = await fetch(`${API_BASE}/stories/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    return jsonOrEmpty(res);
+  },
 };

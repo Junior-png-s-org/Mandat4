@@ -237,6 +237,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 18px;
+  align-items: start;
 }
 
 /* Card / posts */
@@ -316,7 +317,7 @@ body {
 .post-add-comment {
   display: flex;
   border-top: 1px solid #f1ebff;
-  padding: 6px 10px;
+  padding: 4px 8px;
   align-items: center;
   gap: 8px;
 }
@@ -324,8 +325,8 @@ body {
 .post-add-comment input {
   flex: 1;
   border: none;
-  padding: 6px 10px;
-  font-size: 0.84rem;
+  padding: 4px 8px;
+  font-size: 0.8rem;
 }
 
 .post-add-comment input:focus {
@@ -335,8 +336,8 @@ body {
 .post-add-comment button {
   border: none;
   background: none;
-  padding: 0 10px;
-  font-size: 0.84rem;
+  padding: 0 8px;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--accent);
   cursor: pointer;
@@ -377,6 +378,17 @@ body {
   font-size: 1.8rem;
   cursor: pointer;
   color: #777;
+}
+
+.modal-delete {
+  position: absolute;
+  right: 46px;
+  top: 10px;
+  border: none;
+  background: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #ff4f7d;
 }
 
 .modal-body {
