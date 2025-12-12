@@ -138,6 +138,11 @@ async function loadStories() {
       const imgEl = sb.querySelector(`#storyImg_${s.id}`);
       if (imgEl) {
         imgEl.src = s.image_url;
+        imgEl.addEventListener("error", () => {
+          if (!imgEl.src.includes("/api/proxy?url=")) {
+            imgEl.src = `/api/proxy?url=${encodeURIComponent(s.image_url)}`;
+          }
+        });
       }
       const delBtn = document.createElement("button");
       delBtn.textContent = "×";
@@ -168,6 +173,11 @@ async function loadStories() {
         if (viewStoryImg) {
           viewStoryImg.style.display = "block";
           viewStoryImg.src = s.image_url;
+          viewStoryImg.onerror = () => {
+            if (!viewStoryImg.src.includes("/api/proxy?url=")) {
+              viewStoryImg.src = `/api/proxy?url=${encodeURIComponent(s.image_url)}`;
+            }
+          };
         }
         if (viewStoryModal) viewStoryModal.style.display = "flex";
       });

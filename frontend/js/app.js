@@ -17,6 +17,9 @@ async function loadCurrentUser() {
     if (user && user.username && nameSpan) {
       nameSpan.textContent = user.username;
     }
+    if (user && user.id) {
+      window.currentUserId = user.id;
+    }
   } catch (err) {
     console.error("Erreur chargement utilisateur courant:", err);
   }
@@ -59,19 +62,13 @@ function displayPosts(photos) {
 
       <div class="post-actions">
         <i class="fa-regular fa-heart post-like"></i>
-        <i class="fa-regular fa-comment post-comments-count"></i>
+        <i class="fa-regular fa-comment"></i>
+        <span class="post-comments-count-label" data-photo-comments-count="${photo.id}">${photo.comment_count}</span>
       </div>
 
       <div class="post-likes">
         <span data-photo-likes="${photo.id}">0</span> likes
       </div>
-
-      <div class="post-comments-count">
-  <span data-photo-comments-count="${photo.id}">
-    ${photo.comment_count}
-  </span> commentaires
-</div>
-
 
       <div class="post-desc">
         <strong>${authorName}</strong>
@@ -85,7 +82,15 @@ function displayPosts(photos) {
     `;
 
     const imgEl = article.querySelector(".post-img");
-    if (imgEl) imgEl.addEventListener("click", () => openModal(photo));
+    if (imgEl) {
+      imgEl.addEventListener("click", () => openModal(photo));
+      imgEl.addEventListener("error", () => {
+        const original = imageUrl;
+        if (!imgEl.src.includes("/api/proxy?url=")) {
+          imgEl.src = `/api/proxy?url=${encodeURIComponent(original)}`;
+        }
+      });
+    }
 
     const likeIcon = article.querySelector(".post-like");
     if (likeIcon) {
@@ -115,6 +120,15 @@ function displayPosts(photos) {
         input.value = "";
         await loadComments(photo.id)
         await refreshCommnetsCount(photo.id);
+      });
+    }
+    const deleteBtn = article.querySelector(".post-delete-btn");
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", async () => {
+        const ok = window.confirm("Êtes-vous sûr de vouloir supprimer cette photo ?");
+        if (!ok) return;
+        await api.deletePhoto(photo.id);
+        await loadPhotos(searchInput ? searchInput.value.trim() : "");
       });
     }
 
@@ -150,15 +164,6 @@ async function loadComments(photoId) {
     container.appendChild(p);
   });
 }
-const deletebtn= article.querySelector(`[data-photo-id="${photo.id}"]`);
-    if (deletebtn) {
-      deletebtn.addEventListener("click", async () => {
-        if (!confirm("Êtes-vous sûr de vouloir supprimer cette photo ?")) 
-          return; 
-        await api.deletePhoto(photo.id);
-        loadPhotos();
-      });
-    }     
 
 if (searchInput) {
   searchInput.addEventListener("input", () => {

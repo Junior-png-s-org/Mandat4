@@ -20,7 +20,14 @@ export function openModal(photo) {
   modal.style.display = "flex";
 
   const imgUrl = photo.image_path || photo.download_url || "";
-  if (modalImg) modalImg.src = imgUrl;
+  if (modalImg) {
+    modalImg.src = imgUrl;
+    modalImg.onerror = () => {
+      if (!modalImg.src.includes("/api/proxy?url=")) {
+        modalImg.src = `/api/proxy?url=${encodeURIComponent(imgUrl)}`;
+      }
+    };
+  }
 
   const authorName = photo.username || photo.author || "Utilisateur";
   if (modalAuthor) modalAuthor.textContent = authorName;

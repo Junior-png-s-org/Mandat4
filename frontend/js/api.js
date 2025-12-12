@@ -117,6 +117,14 @@ export const api = {
     return jsonOrEmpty(res);
   },
 
+  async deletePhoto(id) {
+    const res = await fetch(`${API_BASE}/photos/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    return jsonOrEmpty(res);
+  },
+
   async getStories() {
     const res = await fetch(`${API_BASE}/stories`, { credentials: "include" });
     return jsonOrEmpty(res);
