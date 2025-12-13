@@ -41,7 +41,15 @@ function displayResults(list) {
       </div>
     `;
 
-    card.querySelector(".post-img").addEventListener("click", () => openModal(photo));
+    const img = card.querySelector(".post-img");
+    if (img) {
+      img.addEventListener("click", () => openModal(photo));
+      img.addEventListener("error", () => {
+        if (!img.src.includes("/api/proxy?url=")) {
+          img.src = `/api/proxy?url=${encodeURIComponent(url)}`;
+        }
+      });
+    }
 
     grid.appendChild(card);
   });

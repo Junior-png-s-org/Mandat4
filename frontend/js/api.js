@@ -117,10 +117,39 @@ export const api = {
     return jsonOrEmpty(res);
   },
 
-  deletePhoto(id){
-    return fetch(`${API_BASE}/photos/${id}`, {
+  async deletePhoto(id) {
+    const res = await fetch(`${API_BASE}/photos/${id}`, {
       method: "DELETE",
       credentials: "include",
-    }).then(r => jsonOrEmpty(r));
-  }
+    });
+    return jsonOrEmpty(res);
+  },
+
+  async getStories() {
+    const res = await fetch(`${API_BASE}/stories`, { credentials: "include" });
+    return jsonOrEmpty(res);
+  },
+
+  async getMyStories() {
+    const res = await fetch(`${API_BASE}/stories/me`, { credentials: "include" });
+    return jsonOrEmpty(res);
+  },
+
+  async addStory(image_url, title = "", video_url = "") {
+    const res = await fetch(`${API_BASE}/stories`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image_url, video_url, title }),
+      credentials: "include",
+    });
+    return jsonOrEmpty(res);
+  },
+
+  async deleteStory(id) {
+    const res = await fetch(`${API_BASE}/stories/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    return jsonOrEmpty(res);
+  },
 };

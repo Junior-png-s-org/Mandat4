@@ -128,6 +128,7 @@ async function loadStories() {
       sb.className = "story-bubble";
       sb.setAttribute("data-story-id", String(s.id));
       sb.style.cursor = "pointer";
+      sb.style.position = "relative";
       sb.innerHTML = `
         <div class="story-avatar">
           <img id="storyImg_${s.id}" alt="story" />
@@ -137,7 +138,34 @@ async function loadStories() {
       const imgEl = sb.querySelector(`#storyImg_${s.id}`);
       if (imgEl) {
         imgEl.src = s.image_url;
+        imgEl.addEventListener("error", () => {
+          if (!imgEl.src.includes("/api/proxy?url=")) {
+            imgEl.src = `/api/proxy?url=${encodeURIComponent(s.image_url)}`;
+          }
+        });
       }
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "×";
+      delBtn.setAttribute("title", "Supprimer");
+      delBtn.style.position = "absolute";
+      delBtn.style.right = "2px";
+      delBtn.style.top = "2px";
+      delBtn.style.border = "none";
+      delBtn.style.background = "#ff3c7f";
+      delBtn.style.color = "#fff";
+      delBtn.style.width = "22px";
+      delBtn.style.height = "22px";
+      delBtn.style.borderRadius = "50%";
+      delBtn.style.cursor = "pointer";
+      delBtn.style.fontSize = "14px";
+      delBtn.style.lineHeight = "22px";
+      delBtn.style.padding = "0";
+      sb.appendChild(delBtn);
+      delBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await api.deleteStory(s.id);
+        sb.remove();
+      });
       sb.addEventListener("click", () => {
         if (viewStoryTitle) viewStoryTitle.textContent = s.title || "Story";
         const video = document.getElementById("viewStoryVideo");
@@ -145,6 +173,11 @@ async function loadStories() {
         if (viewStoryImg) {
           viewStoryImg.style.display = "block";
           viewStoryImg.src = s.image_url;
+          viewStoryImg.onerror = () => {
+            if (!viewStoryImg.src.includes("/api/proxy?url=")) {
+              viewStoryImg.src = `/api/proxy?url=${encodeURIComponent(s.image_url)}`;
+            }
+          };
         }
         if (viewStoryModal) viewStoryModal.style.display = "flex";
       });

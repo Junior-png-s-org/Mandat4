@@ -10,6 +10,7 @@ const modalLikeIcon = document.getElementById("modalLikeIcon");
 const modalComments = document.getElementById("modalComments");
 const newCommentInput = document.getElementById("newComment");
 const sendCommentBtn = document.getElementById("sendComment");
+const deleteModalPhotoBtn = document.getElementById("deleteModalPhoto");
 
 let currentPhoto = null;
 
@@ -20,7 +21,14 @@ export function openModal(photo) {
   modal.style.display = "flex";
 
   const imgUrl = photo.image_path || photo.download_url || "";
-  if (modalImg) modalImg.src = imgUrl;
+  if (modalImg) {
+    modalImg.src = imgUrl;
+    modalImg.onerror = () => {
+      if (!modalImg.src.includes("/api/proxy?url=")) {
+        modalImg.src = `/api/proxy?url=${encodeURIComponent(imgUrl)}`;
+      }
+    };
+  }
 
   const authorName = photo.username || photo.author || "Utilisateur";
   if (modalAuthor) modalAuthor.textContent = authorName;
@@ -34,6 +42,11 @@ export function openModal(photo) {
 
   refreshModalLikes();
   loadModalComments();
+
+  const isOwner = !!(window.currentUserId && photo.user_id === window.currentUserId);
+  if (deleteModalPhotoBtn) {
+    deleteModalPhotoBtn.style.display = isOwner ? "inline-block" : "none";
+  }
 }
 
 async function refreshModalLikes() {
@@ -93,5 +106,16 @@ if (sendCommentBtn) {
     await api.addComment(currentPhoto.id, text);
     newCommentInput.value = "";
     await loadModalComments();
+  });
+}
+
+if (deleteModalPhotoBtn) {
+  deleteModalPhotoBtn.addEventListener("click", async () => {
+    if (!currentPhoto) return;
+    const ok = window.confirm("Supprimer cette photo ?");
+    if (!ok) return;
+    await api.deletePhoto(currentPhoto.id);
+    if (modal) modal.style.display = "none";
+    window.location.reload();
   });
 }
