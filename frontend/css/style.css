@@ -238,6 +238,7 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 18px;
   align-items: start;
+  margin-bottom: 48px; 
 }
 
 /* Card / posts */
@@ -246,6 +247,7 @@ body {
   border-radius: var(--radius-lg);
   padding: 18px 20px;
   box-shadow: 0 12px 24px rgba(77, 58, 163, 0.08);
+  margin-bottom: 12px;
 }
 
 .post {
