@@ -16,9 +16,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.set("trust proxy", 1);
+
 app.use(
   session({
-    secret: "instakill-secret",
+    secret: process.env.SESSION_SECRET || "instakill-secret",
     resave: false,
     saveUninitialized: false,
   })
