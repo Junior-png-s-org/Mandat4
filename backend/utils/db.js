@@ -1,8 +1,10 @@
 
+const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-const dbPath = path.join(__dirname, "basededonnee.sqlite3");
+const dbPath = process.env.SQLITE_PATH || path.join(__dirname, "basededonnee.sqlite3");
+try { fs.mkdirSync(path.dirname(dbPath), { recursive: true }); } catch {}
 const db = new sqlite3.Database(dbPath);
 
 function all(sql, params = []) {
