@@ -260,6 +260,11 @@ body {
   height: 520px;
 }
 
+/* Cartes dans la page Recherche: hauteur naturelle, pas de grand espace */
+#resultsGrid .post {
+  height: auto;
+}
+
 .post-header {
   display: flex;
   align-items: center;

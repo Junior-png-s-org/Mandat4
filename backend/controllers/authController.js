@@ -59,6 +59,12 @@ async function login(req, res) {
     }
 
     req.session.user = { id: user.id, username: user.username };
+    res.cookie("ik_auth", "1", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.COOKIE_SECURE === "true",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.json({ message: "Connexion réussie.", user: req.session.user });
   } catch (err) {
     console.error("Erreur login:", err);
@@ -73,6 +79,7 @@ function logout(req, res) {
     }
     // Supprime le cookie de session côté client
     res.clearCookie("connect.sid");
+    res.clearCookie("ik_auth");
     res.json({ message: "Déconnexion réussie." });
   });
 }
