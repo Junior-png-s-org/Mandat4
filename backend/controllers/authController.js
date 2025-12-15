@@ -63,7 +63,7 @@ async function login(req, res) {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.COOKIE_SECURE === "true",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     res.json({ message: "Connexion réussie.", user: req.session.user });
   } catch (err) {
