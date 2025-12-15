@@ -1,10 +1,10 @@
 
 const bcrypt = require("bcryptjs");
-const { get, run, all } = require("../utils/db");
+const { get, run, all } = require("../utils/db"); // Accès à la base SQLite (helpers promisifiés)
 
 async function register(req, res) {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body; // Données envoyées par le formulaire
 
     if (!username || !password) {
       return res
@@ -22,7 +22,7 @@ async function register(req, res) {
         .json({ error: "Ce nom d'utilisateur existe déjà." });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 10); // Hash du mot de passe (salt=10)
     await run(
       "INSERT INTO users (username, password) VALUES (?, ?)",
       [username, hashed]
@@ -37,7 +37,7 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body; // Tentative de connexion
 
     if (!username || !password) {
       return res
@@ -58,7 +58,7 @@ async function login(req, res) {
       return res.status(400).json({ error: "Mot de passe incorrect." });
     }
 
-    req.session.user = { id: user.id, username: user.username };
+    req.session.user = { id: user.id, username: user.username }; // Session en mémoire
     res.cookie("ik_auth", "1", {
       httpOnly: true,
       sameSite: "lax",
@@ -86,7 +86,7 @@ function logout(req, res) {
 
 // Retourne l'utilisateur courant (ou null s'il n'y a pas de session)
 async function ensureProfileColumns() {
-  const cols = await all("PRAGMA table_info(users)");
+  const cols = await all("PRAGMA table_info(users)"); // Garantit les colonnes de profil
   const names = cols.map((c) => c.name);
   if (!names.includes("full_name")) {
     await run("ALTER TABLE users ADD COLUMN full_name TEXT");
@@ -109,7 +109,7 @@ async function me(req, res) {
       "SELECT id, username, COALESCE(full_name,'') AS full_name, COALESCE(bio,'') AS bio, COALESCE(avatar_url,'') AS avatar_url FROM users WHERE id = ?",
       [req.session.user.id]
     );
-    res.json(row);
+    res.json(row); // Données du profil minimal pour l'UI
   } catch (err) {
     res.status(500).json({ error: "Erreur interne du serveur." });
   }
@@ -136,7 +136,7 @@ async function updateProfile(req, res) {
     if (!req.session || !req.session.user) {
       return res.status(401).json({ error: "Non autorisé." });
     }
-    const { full_name = "", bio = "", avatar_url = "" } = req.body || {};
+    const { full_name = "", bio = "", avatar_url = "" } = req.body || {}; // Champs modifiables
     await ensureProfileColumns();
     await run(
       "UPDATE users SET full_name = ?, bio = ?, avatar_url = ? WHERE id = ?",
