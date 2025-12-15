@@ -1,5 +1,5 @@
 
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { get, run, all } = require("../utils/db");
 
 async function register(req, res) {
